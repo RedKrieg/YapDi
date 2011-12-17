@@ -120,6 +120,23 @@ class Daemon:
             pf = file(self.pidfile,'r')
             pid = int(pf.read().strip())
             pf.close()
+            
+            # See if the pidfile matches the calling script name
+            cmdlinepath = '/proc/%d/cmdline' % pid
+            if os.path.exists(cmdlinepath):
+                cmdlinefile = open(cmdlinepath, 'r')
+                cmdline = cmdlinefile.read()
+                cmdlinefile.close()
+
+                # The pid in our file isn't this script
+                if not sys.argv[0].split('/')[-1] in cmdline:
+                    self.delpid()
+                    pid = None
+
+            # The pid from our pidfile isn't running      
+            else:
+                self.delpid()
+                pid = None
         except IOError:
             pid = None
         return pid
