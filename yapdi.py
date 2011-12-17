@@ -108,10 +108,9 @@ class Daemon:
 
     def restart(self):
         ''' Restart an instance; If an instance is already running kill it and start else just start '''
-        if self.status():
-            kill_status = self.kill()
-            if kill_status == OPERATION_FAILED:
-                return kill_status
+        kill_status = self.kill()
+        if kill_status == OPERATION_FAILED:
+            return kill_status
         return self.daemonize()
 
     def status(self):
